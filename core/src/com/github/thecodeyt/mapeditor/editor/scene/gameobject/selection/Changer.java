@@ -10,20 +10,19 @@ public class Changer {
     public Vector2 position = new Vector2(0, 0);
     public float radius = 0;
 
-    public HitBox getHitbox() {
+    public HitBox getHitBox() {
         return new HitBox(this.position.cpy().sub(radius, radius), new Vector2(radius*2, radius*2));
     }
     public float getNewSize(Vector2 pointerPosition, boolean align, float oldSize) {
         double delta = Mathf.delta(this.position, pointerPosition).x;
+        float new_size = oldSize;
 
-        if(oldSize+delta >= Constants.MIN_GAME_OBJECT_SIZE) {
-            oldSize += delta;
-            if(align) {
-                oldSize = Mathf.align(oldSize, Constants.GRID_SPACING);
-            }
+        new_size += delta;
+        if(align) {
+            new_size = Mathf.align(new_size, Constants.GRID_SPACING);
         }
 
-        return oldSize;
+        return new_size < Constants.MIN_GAME_OBJECT_SIZE ? oldSize : new_size;
     }
 
     public void draw(ShapeRenderer shapeRenderer) {

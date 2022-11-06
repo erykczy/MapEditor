@@ -1,12 +1,14 @@
 package com.github.thecodeyt.mapeditor.editor.scene;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.github.thecodeyt.mapeditor.editor.scene.camera.SceneCamera;
 import com.github.thecodeyt.mapeditor.editor.scene.gameobject.CircleObject;
 import com.github.thecodeyt.mapeditor.editor.scene.gameobject.GameObject;
 import com.github.thecodeyt.mapeditor.editor.scene.gameobject.selection.Selection;
-import com.github.thecodeyt.mapeditor.math.Inputf;
+import com.github.thecodeyt.mapeditor.math.input.Action;
+import com.github.thecodeyt.mapeditor.math.input.Inputf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,43 +25,86 @@ public class Scene {
     public void createNewCircleObject(Vector2 position, float radius) {
         CircleObject circleObject = new CircleObject(this, position, radius);
         gameObjects.add(circleObject);
-        currentSelection = new Selection(this, circleObject);
+        createNewSelection(circleObject);
+    }
+    public void removeSelectedGameObject() {
+        if(currentSelection == null) {
+            return;
+        }
+
+        gameObjects.remove(currentSelection.gameObject);
+        currentSelection = null;
+    }
+    public void createNewSelection(GameObject gameObject) {
+        // creating selection
+        currentSelection = new Selection(this, gameObject);
+    }
+    public GameObject duplicateGameObject(GameObject gameObject) {
+        GameObject copy = gameObject.copy();
+        copy.position.add(copy.size); // offset
+
+        this.gameObjects.add(copy); // adding
+
+        this.createNewSelection(copy); // new selection
+        return copy;
     }
     private void handleSelection() {
+        if(!Inputf.getCurrentAction().equals(Action.NONE)) {
+            return;
+        }
+
+        if(currentSelection != null) {
+            if(Gdx.input.isKeyJustPressed(Input.Keys.FORWARD_DEL)) {
+                this.removeSelectedGameObject();
+            }
+            if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+                this.duplicateGameObject(currentSelection.gameObject);
+            }
+        }
+
+        // is there mouse action
         if(!Gdx.input.isButtonJustPressed(0)) {
             return;
-        } // Is there any action
+        }
         Vector2 pointerPosition = Inputf.getPointerPosition(camera.viewport);
 
         boolean noGameObjectSelected = true;
-        for (GameObject gameObject : gameObjects) {
-            if(!gameObject.getHitBox().isPointColliding(pointerPosition)) {
-                continue;
-            } // did pointer click
-            if(currentSelection != null && currentSelection.gameObject.equals(gameObject)) {
+        // Creating selection
+        // don't want to select the same gameObject again
+        if(currentSelection != null && currentSelection.gameObject.getHitBox().isPointColliding(pointerPosition)) {
+            noGameObjectSelected = false;
+        }
+        else {
+            for (GameObject gameObject : gameObjects) {
+                // did pointer click
+                if(!gameObject.getHitBox().isPointColliding(pointerPosition)) {
+                    continue;
+                }
+
+                // creating new selection
+                createNewSelection(gameObject);
                 noGameObjectSelected = false;
                 break;
-            } // don't want to select the same gameObject again
+            }
+        }
 
-            // creating new selection
-            currentSelection = new Selection(this, gameObject);
-            noGameObjectSelected = false;
-        } // Creating selection
-
+        // Removing current selection
         if(noGameObjectSelected) {
             currentSelection = null;
-        } // Removing current selection
+        }
     }
 
     public void update(float delta) {
         this.handleSelection();
 
+        // Updating game objects
         for (GameObject gameObject : gameObjects) {
             gameObject.update();
-        } // Updating game objects
+        }
+        // Updating current selection
         if(currentSelection != null) {
             currentSelection.update();
-        } // Updating current selection
+        }
 
         camera.update(delta);
     }

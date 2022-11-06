@@ -17,8 +17,8 @@ public class EditorScreen implements Screen {
     @Override
     public void render(float delta) {
         // Updating
-        scene.update(delta);
         ui.update(delta);
+        scene.update(delta);
 
         // Drawing
         scene.draw();

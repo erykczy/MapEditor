@@ -10,12 +10,15 @@ import com.github.thecodeyt.mapeditor.editor.ui.elements.UIElement;
 
 public class UICamera {
     public UI ui;
-    public final Viewport viewport = new ExtendViewport(400, 400, new OrthographicCamera());
-    public final ShapeRenderer shapeRenderer = new ShapeRenderer();
-    public final SpriteBatch spriteBatch = new SpriteBatch();
+    public final Viewport viewport;
+    public final ShapeRenderer shapeRenderer;
+    public final SpriteBatch spriteBatch;
 
     public UICamera(UI ui) {
         this.ui = ui;
+        this.viewport = new ExtendViewport(400, 400, new OrthographicCamera());
+        this.shapeRenderer = new ShapeRenderer();
+        this.spriteBatch = new SpriteBatch();
     }
 
     public void draw() {

@@ -12,14 +12,19 @@ public class CircleObject extends GameObject {
     }
 
     @Override
+    public GameObject copy() {
+        CircleObject circleObject = new CircleObject(this.scene, this.position.cpy(), this.radius);
+        return circleObject;
+    }
+
+    @Override
     public void update() {
         this.size.y = this.size.x;
         this.radius = this.size.x/2F;
     }
-
     @Override
     public void draw() {
         super.draw();
-        this.scene.camera.shapeRenderer.circle(this.position.x+this.radius, this.position.y+this.radius, this.radius, 50);
+        this.scene.camera.shapeRenderer.circle(this.position.x+this.radius, this.position.y+this.radius, this.radius, Math.round(this.radius*20));
     }
 }

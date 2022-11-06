@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.thecodeyt.mapeditor.editor.Constants;
-import com.github.thecodeyt.mapeditor.editor.scene.GridRenderer;
+import com.github.thecodeyt.mapeditor.math.render.GridRenderer;
 import com.github.thecodeyt.mapeditor.editor.scene.Scene;
 import com.github.thecodeyt.mapeditor.editor.scene.gameobject.GameObject;
 
@@ -26,12 +26,12 @@ public class SceneCamera {
 
     private void handleCameraMovement(float delta) {
         OrthographicCamera sceneCamera = (OrthographicCamera) viewport.getCamera();
-        float speed = sceneCamera.zoom*delta;
-        if(!Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-            speed *= 10;
+        float speed = sceneCamera.zoom*delta*20;
+        if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+            speed /= 2;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-            speed *= 100;
+            speed *= 2;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.W)) {
             sceneCamera.translate(0, speed, 0);
@@ -39,7 +39,7 @@ public class SceneCamera {
         if(Gdx.input.isKeyPressed(Input.Keys.S)) {
             sceneCamera.translate(0, -speed, 0);
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.D)) {
+        if(Gdx.input.isKeyPressed(Input.Keys.D) && !Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
             sceneCamera.translate(speed, 0, 0);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.A)) {

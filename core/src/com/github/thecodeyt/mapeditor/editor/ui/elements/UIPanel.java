@@ -7,10 +7,10 @@ import com.github.thecodeyt.mapeditor.editor.ui.UI;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Panel extends Rect {
+public class UIPanel extends UIRect {
     public List<UIElement> elements = new ArrayList<>();
 
-    public Panel(UI ui, Vector2 position, Vector2 size, Color color) {
+    public UIPanel(UI ui, Vector2 position, Vector2 size, Color color) {
         super(ui, position, size, color);
     }
 

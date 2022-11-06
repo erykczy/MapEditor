@@ -8,9 +8,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.github.thecodeyt.mapeditor.editor.font.Fonts;
 import com.github.thecodeyt.mapeditor.editor.ui.UI;
 import com.github.thecodeyt.mapeditor.math.HitBox;
-import com.github.thecodeyt.mapeditor.math.Inputf;
+import com.github.thecodeyt.mapeditor.math.input.Inputf;
 
-public class Button extends Rect {
+public class UIButton extends UIRect {
     public Color hoverColor;
     public Color textColor;
     public boolean hover = false;
@@ -18,7 +18,7 @@ public class Button extends Rect {
     public BitmapFont font;
     public Runnable onClick;
 
-    public Button(UI ui, Vector2 position, Vector2 size, Color color, Color hoverColor, Color textColor, String text, Runnable onClick) {
+    public UIButton(UI ui, Vector2 position, Vector2 size, Color color, Color hoverColor, Color textColor, String text, Runnable onClick) {
         super(ui, position, size, color);
         this.hoverColor = hoverColor;
         this.text = text;
@@ -30,7 +30,7 @@ public class Button extends Rect {
         parameter.color = this.textColor;
         this.font = Fonts.PIXEL.generateFont(parameter);
     }
-    public Button(UI ui, Vector2 position, Vector2 size, Color color, Color hoverColor, Color textColor, String text, int textSize, Runnable onClick) {
+    public UIButton(UI ui, Vector2 position, Vector2 size, Color color, Color hoverColor, Color textColor, String text, int textSize, Runnable onClick) {
         super(ui, position, size, color);
         this.hoverColor = hoverColor;
         this.text = text;

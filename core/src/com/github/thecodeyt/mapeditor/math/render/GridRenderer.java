@@ -1,18 +1,23 @@
-package com.github.thecodeyt.mapeditor.editor.scene;
+package com.github.thecodeyt.mapeditor.math.render;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.github.thecodeyt.mapeditor.math.Mathf;
+import com.github.thecodeyt.mapeditor.math.Screenf;
 
 public class GridRenderer {
     public void draw(ShapeRenderer shapeRenderer, Viewport viewport, float spacing, Color color) {
-        OrthographicCamera camera = (OrthographicCamera) viewport.getCamera();
-        float zoom = camera.zoom;
-        Vector2 screenSize = new Vector2(viewport.getWorldWidth(), viewport.getWorldHeight()).scl(zoom);
-        Vector2 positionCenter = new Vector2(viewport.getCamera().position.x, viewport.getCamera().position.y);
-        Vector2 positionCorner = positionCenter.cpy().sub(screenSize.cpy().scl(0.5F));
+        //OrthographicCamera camera = (OrthographicCamera) viewport.getCamera();
+        //float zoom = camera.zoom;
+        //Vector2 screenSize = new Vector2(viewport.getWorldWidth(), viewport.getWorldHeight()).scl(zoom);
+        //Vector2 positionCenter = new Vector2(viewport.getCamera().position.x, viewport.getCamera().position.y);
+        //Vector2 positionCorner = positionCenter.cpy().sub(screenSize.cpy().scl(0.5F));
+        Vector2 screenSize = Screenf.getScreenSize(viewport);
+        Vector2 positionCenter = Mathf.vector(viewport.getCamera().position);
+        Vector2 positionCorner = Screenf.getBottomLeftCorner(viewport);
 
         float offset = spacing;
         Vector2 drawingStartPoint = new Vector2(Math.round(positionCorner.x/spacing)*spacing-offset, Math.round(positionCorner.y/spacing)*spacing-offset);

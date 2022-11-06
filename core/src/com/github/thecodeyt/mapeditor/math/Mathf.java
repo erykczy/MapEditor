@@ -1,6 +1,7 @@
 package com.github.thecodeyt.mapeditor.math;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 public class Mathf {
     public static double distance(Vector2 p0, Vector2 p1) {
@@ -35,5 +36,8 @@ public class Mathf {
         vector.x = align(vector.x, interval);
         vector.y = align(vector.y, interval);
         return vector;
+    }
+    public static Vector2 vector(Vector3 vector3) {
+        return new Vector2(vector3.x, vector3.y);
     }
 }

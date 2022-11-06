@@ -8,4 +8,7 @@ public abstract class UIPrefab {
     public UIPrefab(UI ui) {
         this.ui = ui;
     }
+    public void update() {
+
+    }
 }

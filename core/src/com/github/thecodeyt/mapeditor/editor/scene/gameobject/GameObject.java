@@ -5,7 +5,7 @@ import com.github.thecodeyt.mapeditor.editor.Constants;
 import com.github.thecodeyt.mapeditor.editor.scene.Scene;
 import com.github.thecodeyt.mapeditor.math.HitBox;
 
-public abstract class GameObject {
+public class GameObject {
     public Scene scene;
     public Vector2 position;
     public Vector2 size;
@@ -23,6 +23,10 @@ public abstract class GameObject {
         Vector2 h_size = size.cpy().add(offsetX*2, offsetY*2);
 
         return new HitBox(h_pos, h_size);
+    }
+    public GameObject copy() {
+        GameObject copy = new GameObject(this.scene, this.position.cpy(), this.size.cpy());
+        return copy;
     }
 
     public void update() {

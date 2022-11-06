@@ -7,7 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.github.thecodeyt.mapeditor.editor.Constants;
 import com.github.thecodeyt.mapeditor.editor.scene.Scene;
 import com.github.thecodeyt.mapeditor.editor.scene.gameobject.GameObject;
-import com.github.thecodeyt.mapeditor.math.Inputf;
+import com.github.thecodeyt.mapeditor.math.input.Action;
+import com.github.thecodeyt.mapeditor.math.input.Inputf;
 import com.github.thecodeyt.mapeditor.math.Mathf;
 import com.github.thecodeyt.mapeditor.math.Shapf;
 
@@ -15,7 +16,6 @@ public class Selection {
     public Scene scene;
     public GameObject gameObject;
 
-    private SelectionAction currentAction;
     private Changer widthChanger;
     private Changer heightChanger;
     private Vector2 moveDelta;
@@ -23,7 +23,6 @@ public class Selection {
     public Selection(Scene scene, GameObject gameObject) {
         this.scene = scene;
         this.gameObject = gameObject;
-        this.currentAction = SelectionAction.SELECT_ONLY;
         this.widthChanger = new Changer();
         this.heightChanger = new Changer();
     }
@@ -35,44 +34,47 @@ public class Selection {
         heightChanger.position = new Vector2(gameObject.position.x+gameObject.size.x/2F, gameObject.position.y+gameObject.size.y);
         heightChanger.radius = Constants.CHANGER_SIZE*gameObject.size.y;
     }
-    private void checkActions() {
+    private void checkForActions() {
+        // if there is interaction
         if(!Gdx.input.isButtonPressed(0)) {
-            currentAction = SelectionAction.NONE;
+            if (Inputf.getCurrentAction().groupID == 0)
+                Inputf.setCurrentAction(Action.NONE);
             return;
-        } // if the object has been pressed
-        if(currentAction != SelectionAction.NONE) {
+        }
+        // don't want conflicts with other actions
+        if(Inputf.getCurrentAction() != Action.NONE) {
             return;
-        } // if there is no current action
+        }
         Vector2 pointerPosition = Inputf.getPointerPosition(scene.camera.viewport);
 
-        if(widthChanger.getHitbox().isPointColliding(pointerPosition)) {
-            currentAction = SelectionAction.CHANGE_WIDTH;
+        if(widthChanger.getHitBox().isPointColliding(pointerPosition)) {
+            Inputf.setCurrentAction(Action.CHANGING_WIDTH_OF_GAME_OBJECT);
             return;
         }
-        if(heightChanger.getHitbox().isPointColliding(pointerPosition)) {
-            currentAction = SelectionAction.CHANGE_HEIGHT;
+        if(heightChanger.getHitBox().isPointColliding(pointerPosition)) {
+            Inputf.setCurrentAction(Action.CHANGING_HEIGHT_OF_GAME_OBJECT);
             return;
         }
 
-        currentAction = SelectionAction.MOVE;
+        Inputf.setCurrentAction(Action.MOVING_GAME_OBJECT);
         this.moveDelta = Mathf.delta(gameObject.position, pointerPosition);
     }
     private void executeCurrentAction() {
         Vector2 pointerPosition = Inputf.getPointerPosition(scene.camera.viewport);
         boolean align = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT);
 
-        switch (currentAction) {
-            case MOVE -> {
+        switch (Inputf.getCurrentAction()) {
+            case MOVING_GAME_OBJECT -> {
                 gameObject.position = pointerPosition.cpy().sub(this.moveDelta);
 
                 if(align) {
                     Mathf.align(gameObject.position, Constants.GRID_SPACING);
                 }
             }
-            case CHANGE_WIDTH -> {
+            case CHANGING_WIDTH_OF_GAME_OBJECT -> {
                 gameObject.size.x = widthChanger.getNewSize(pointerPosition, align, gameObject.size.x);
             }
-            case CHANGE_HEIGHT -> {
+            case CHANGING_HEIGHT_OF_GAME_OBJECT -> {
                 gameObject.size.y = widthChanger.getNewSize(pointerPosition, align, gameObject.size.y);
             }
         }
@@ -80,7 +82,7 @@ public class Selection {
 
     public void update() {
         updateChangers();
-        checkActions();
+        checkForActions();
         executeCurrentAction();
     }
     public void draw() {
@@ -91,7 +93,7 @@ public class Selection {
         Shapf.drawBorder(shapeRenderer, gameObject.position, gameObject.size, Constants.GAME_OBJECT_SELECTION_COLOR);
 
         // changers
-        if(!currentAction.equals(SelectionAction.MOVE)) { // decoration
+        if(!Inputf.getCurrentAction().equals(Action.MOVING_GAME_OBJECT)) { // decoration
             widthChanger.draw(shapeRenderer);
             heightChanger.draw(shapeRenderer);
         }

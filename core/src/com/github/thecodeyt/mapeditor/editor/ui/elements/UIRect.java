@@ -3,17 +3,23 @@ package com.github.thecodeyt.mapeditor.editor.ui.elements;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.github.thecodeyt.mapeditor.editor.ui.UI;
+import com.github.thecodeyt.mapeditor.math.HitBox;
 
-public class Rect extends UIElement {
+public class UIRect extends UIElement {
     public Vector2 position;
     public Vector2 size;
     public Color color;
 
-    public Rect(UI ui, Vector2 position, Vector2 size, Color color) {
+    public UIRect(UI ui, Vector2 position, Vector2 size, Color color) {
         super(ui);
         this.position = position;
         this.size = size;
         this.color = color;
+    }
+
+    @Override
+    public HitBox getHitBox() {
+        return new HitBox(position, size);
     }
 
     @Override
