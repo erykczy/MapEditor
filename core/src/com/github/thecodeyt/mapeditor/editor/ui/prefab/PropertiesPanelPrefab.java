@@ -8,7 +8,8 @@ import com.github.thecodeyt.mapeditor.editor.ui.elements.UISizeChanger;
 import com.github.thecodeyt.mapeditor.editor.ui.elements.UIPanel;
 import com.github.thecodeyt.mapeditor.math.Axis;
 import com.github.thecodeyt.mapeditor.math.Screenf;
-import com.github.thecodeyt.mapeditor.math.input.Action;
+import com.github.thecodeyt.mapeditor.math.input.ActionDesc;
+import com.github.thecodeyt.mapeditor.math.input.Branch;
 
 public class PropertiesPanelPrefab extends UIPrefab {
     public static final float WIDTH = 0.2F;
@@ -22,7 +23,7 @@ public class PropertiesPanelPrefab extends UIPrefab {
         Vector2 screenSize = Screenf.getScreenSize(viewport);
 
         panel = new UIPanel(ui, positionCorner, new Vector2(WIDTH*screenSize.x, screenSize.y), Constants.PANEL_BACKGROUND_COLOR);
-        widthChanger = new UISizeChanger(ui, Action.CHANGING_WIDTH_OF_PROPERTY_PANEL, Axis.X, panel.size.x, panel.size.x, screenSize.x-panel.size.x);
+        widthChanger = new UISizeChanger(ui, new ActionDesc(Branch.TAB, Branch.CHANGE_SIZE, Branch.X), Axis.X, panel.size.x, panel.size.x, screenSize.x-panel.size.x);
 
         panel.elements.add(widthChanger);
         ui.elements.add(panel);

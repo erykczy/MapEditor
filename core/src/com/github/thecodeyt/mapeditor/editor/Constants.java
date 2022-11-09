@@ -3,6 +3,8 @@ package com.github.thecodeyt.mapeditor.editor;
 import com.badlogic.gdx.graphics.Color;
 
 public class Constants {
+    public static final int MAX_CIRCLE_SEGMENTS = 1000;
+
     public static final Color GRID_COLOR = new Color(0, 1, 0, 0.04F);
     public static final float GRID_SPACING = 10F;
     public static final Color GAME_OBJECT_SELECTION_COLOR = new Color(0, 1, 0, 1F);

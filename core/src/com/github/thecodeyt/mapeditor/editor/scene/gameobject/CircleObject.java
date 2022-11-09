@@ -1,6 +1,7 @@
 package com.github.thecodeyt.mapeditor.editor.scene.gameobject;
 
 import com.badlogic.gdx.math.Vector2;
+import com.github.thecodeyt.mapeditor.editor.Constants;
 import com.github.thecodeyt.mapeditor.editor.scene.Scene;
 
 public class CircleObject extends GameObject {
@@ -19,12 +20,20 @@ public class CircleObject extends GameObject {
 
     @Override
     public void update() {
-        this.size.y = this.size.x;
-        this.radius = this.size.x/2F;
     }
     @Override
     public void draw() {
         super.draw();
-        this.scene.camera.shapeRenderer.circle(this.position.x+this.radius, this.position.y+this.radius, this.radius, Math.round(this.radius*20));
+        int segments = Math.min(Math.round(this.radius+40), Constants.MAX_CIRCLE_SEGMENTS);
+        System.out.println("segments: "+segments);
+        this.scene.camera.shapeRenderer.circle(this.position.x+this.radius, this.position.y+this.radius, this.radius, segments);
     }
+
+    @Override
+    public void setSize(Vector2 size) {
+        this.size.x = size.x;
+        this.size.y = this.size.x;
+        this.radius = this.size.x/2F;
+    }
+
 }

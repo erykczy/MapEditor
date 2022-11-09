@@ -8,7 +8,7 @@ import com.github.thecodeyt.mapeditor.math.HitBox;
 public class GameObject {
     public Scene scene;
     public Vector2 position;
-    public Vector2 size;
+    protected Vector2 size;
 
     public GameObject(Scene scene, Vector2 position, Vector2 size) {
         this.scene = scene;
@@ -34,5 +34,12 @@ public class GameObject {
     }
     public void draw() {
 
+    }
+
+    public Vector2 getSize() {
+        return this.size;
+    }
+    public void setSize(Vector2 size) {
+        this.size = size;
     }
 }

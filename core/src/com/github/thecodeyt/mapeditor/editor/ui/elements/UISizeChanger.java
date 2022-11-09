@@ -6,26 +6,26 @@ import com.github.thecodeyt.mapeditor.editor.Constants;
 import com.github.thecodeyt.mapeditor.editor.ui.UI;
 import com.github.thecodeyt.mapeditor.math.Axis;
 import com.github.thecodeyt.mapeditor.math.HitBox;
-import com.github.thecodeyt.mapeditor.math.input.Action;
-import com.github.thecodeyt.mapeditor.math.input.Inputf;
 import com.github.thecodeyt.mapeditor.math.Mathf;
+import com.github.thecodeyt.mapeditor.math.input.ActionDesc;
+import com.github.thecodeyt.mapeditor.math.input.Inputf;
 
 public class UISizeChanger extends UIElement {
     public Vector2 position = new Vector2();
     public float radius = Constants.CHANGER_SIZE*100;
     public float currentSize = 0;
-    private Action changeSizeAction;
+    private ActionDesc changeSizeActionDesc;
     public float minSize;
     public float maxSize;
-    public Axis changeAxis;
+    public Axis axis;
 
-    public UISizeChanger(UI ui, Action onChangeSizeAction, Axis changeAxis, float currentSize, float minSize, float maxSize) {
+    public UISizeChanger(UI ui, ActionDesc onChangeSizeAction, Axis axis, float currentSize, float minSize, float maxSize) {
         super(ui);
         this.currentSize = currentSize;
-        this.changeSizeAction = onChangeSizeAction;
+        this.changeSizeActionDesc = onChangeSizeAction;
         this.minSize = minSize;
         this.maxSize = maxSize;
-        this.changeAxis = changeAxis;
+        this.axis = axis;
     }
 
     public HitBox getHitBox() {
@@ -33,32 +33,28 @@ public class UISizeChanger extends UIElement {
     }
     private float getNewSize(Vector2 pointerPosition, float oldSize) {
         Vector2 delta_vec = Mathf.delta(this.position, pointerPosition);
-        double delta = changeAxis.equals(Axis.X) ? delta_vec.x : delta_vec.y;
-        float new_size = oldSize;
-        new_size += delta;
+        double delta = axis.equals(Axis.X) ? delta_vec.x : delta_vec.y;
+        float newSize = oldSize;
+        newSize += delta;
 
-        return new_size < minSize || new_size > maxSize ? oldSize : new_size;
+        return newSize >= minSize && (newSize <= maxSize || maxSize == -1) ? newSize : oldSize;
     }
     private void checkForAction() {
         Vector2 pointerPosition = Inputf.getPointerPosition(ui.camera.viewport);
-        // don't want conflict with other actions
-        //if(!Inputf.getCurrentAction().equals(Action.NONE)) {
-        //    return;
-        //}
 
         if(Gdx.input.isButtonPressed(0)) {
-            if(getHitBox().isPointColliding(pointerPosition) && Inputf.getCurrentAction().equals(Action.NONE)) {
-                Inputf.setCurrentAction(changeSizeAction);
+            if(getHitBox().isPointColliding(pointerPosition) && !Inputf.isAnyActionExecuting()) {
+                Inputf.setCurrentActionDesc(changeSizeActionDesc);
             }
         }
         else {
-            if(Inputf.getCurrentAction().equals(changeSizeAction))
-                Inputf.setCurrentAction(Action.NONE);
+            if(Inputf.isAnyActionExecuting() && Inputf.getCurrentActionDesc().equals(changeSizeActionDesc))
+                Inputf.cancelCurrentAction();
         }
     }
     private void executeAction() {
         Vector2 pointerPosition = Inputf.getPointerPosition(ui.camera.viewport);
-        if(Inputf.getCurrentAction().equals(changeSizeAction)) {
+        if(Inputf.isAnyActionExecuting() && Inputf.getCurrentActionDesc().equals(changeSizeActionDesc)) {
             currentSize = getNewSize(pointerPosition, currentSize);
         }
     }

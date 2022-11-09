@@ -7,7 +7,6 @@ import com.github.thecodeyt.mapeditor.editor.scene.camera.SceneCamera;
 import com.github.thecodeyt.mapeditor.editor.scene.gameobject.CircleObject;
 import com.github.thecodeyt.mapeditor.editor.scene.gameobject.GameObject;
 import com.github.thecodeyt.mapeditor.editor.scene.gameobject.selection.Selection;
-import com.github.thecodeyt.mapeditor.math.input.Action;
 import com.github.thecodeyt.mapeditor.math.input.Inputf;
 
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ public class Scene {
     }
     public GameObject duplicateGameObject(GameObject gameObject) {
         GameObject copy = gameObject.copy();
-        copy.position.add(copy.size); // offset
+        copy.position.add(copy.getSize()); // offset
 
         this.gameObjects.add(copy); // adding
 
@@ -49,7 +48,7 @@ public class Scene {
         return copy;
     }
     private void handleSelection() {
-        if(!Inputf.getCurrentAction().equals(Action.NONE)) {
+        if(Inputf.isAnyActionExecuting()) {
             return;
         }
 
@@ -62,8 +61,7 @@ public class Scene {
             }
         }
 
-        // is there mouse action
-        if(!Gdx.input.isButtonJustPressed(0)) {
+        if(!Inputf.justLeftClick()) {
             return;
         }
         Vector2 pointerPosition = Inputf.getPointerPosition(camera.viewport);
@@ -76,7 +74,7 @@ public class Scene {
         }
         else {
             for (GameObject gameObject : gameObjects) {
-                // did pointer click
+                // did pointer click on hitbox
                 if(!gameObject.getHitBox().isPointColliding(pointerPosition)) {
                     continue;
                 }
