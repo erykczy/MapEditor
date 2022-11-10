@@ -15,9 +15,9 @@ public class ContextMenu extends UIPanel {
 
         float optionY = startSpacingY;
         for (ContextMenuOption option : options) {
-            UIButton button = new UIButton(ui, position.cpy().add(spacingX, this.size.y-optionSize.y).sub(0, optionY), optionSize, Constants.CONTEXT_MENU_BACKGROUND_COLOR, Constants.HOVER_COLOR, Constants.TEXT_COLOR, option.name, option.onClick);
+            UIButton button = new UIButton(ui, position.cpy().add(spacingX, this.size.y-optionSize.y).sub(0, optionY), optionSize, Constants.CONTEXT_MENU_BACKGROUND_COLOR, Constants.CONTEXT_MENU_BACKGROUND_COLOR.cpy().add(Constants.HOVER_COLOR), Constants.TEXT_COLOR, option.name, option.onClick);
 
-            elements.add(button);
+            addElement(button);
             optionY += optionSize.y+spacingY;
         }
     }

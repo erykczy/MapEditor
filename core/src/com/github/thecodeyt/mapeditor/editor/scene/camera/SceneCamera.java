@@ -9,9 +9,9 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.thecodeyt.mapeditor.editor.Constants;
-import com.github.thecodeyt.mapeditor.math.render.GridRenderer;
 import com.github.thecodeyt.mapeditor.editor.scene.Scene;
 import com.github.thecodeyt.mapeditor.editor.scene.gameobject.GameObject;
+import com.github.thecodeyt.mapeditor.math.render.GridRenderer;
 
 public class SceneCamera {
     public Scene scene;

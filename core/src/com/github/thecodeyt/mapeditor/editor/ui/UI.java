@@ -2,12 +2,11 @@ package com.github.thecodeyt.mapeditor.editor.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.github.thecodeyt.mapeditor.editor.ui.camera.UICamera;
-import com.github.thecodeyt.mapeditor.editor.ui.elements.contextmenu.ContextMenu;
 import com.github.thecodeyt.mapeditor.editor.ui.elements.UIElement;
-import com.github.thecodeyt.mapeditor.editor.ui.prefab.PropertiesPanelPrefab;
+import com.github.thecodeyt.mapeditor.editor.ui.elements.contextmenu.ContextMenu;
+import com.github.thecodeyt.mapeditor.editor.ui.prefab.PropertyTabPrefab;
 import com.github.thecodeyt.mapeditor.editor.ui.prefab.RightClickContextMenuPrefab;
 import com.github.thecodeyt.mapeditor.editor.ui.prefab.UIPrefab;
-import com.github.thecodeyt.mapeditor.math.Screenf;
 import com.github.thecodeyt.mapeditor.math.input.Inputf;
 import com.github.thecodeyt.mapeditor.screen.EditorScreen;
 
@@ -28,16 +27,16 @@ public class UI {
     }
 
     public void setCurrentContextMenu(ContextMenu panel) {
-        elements.remove(currentContextMenu);
+        removeElement(currentContextMenu);
         currentContextMenu = panel;
         if(panel != null) {
-            elements.add(currentContextMenu);
+            addElement(currentContextMenu);
         }
     }
 
     private void create() {
         created = true;
-        prefabs.add(new PropertiesPanelPrefab(this));
+        prefabs.add(new PropertyTabPrefab(this));
     }
     public void update(float delta) {
         if(!created) {
@@ -77,5 +76,13 @@ public class UI {
     }
     public void resize(int width, int height) {
         camera.resize(width, height);
+    }
+
+    // GETTERS SETTERS
+    public void addElement(UIElement element) {
+        this.elements.add(element);
+    }
+    public void removeElement(UIElement element) {
+        this.elements.remove(element);
     }
 }

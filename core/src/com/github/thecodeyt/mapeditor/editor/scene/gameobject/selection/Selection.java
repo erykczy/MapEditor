@@ -8,11 +8,11 @@ import com.github.thecodeyt.mapeditor.editor.Constants;
 import com.github.thecodeyt.mapeditor.editor.scene.Scene;
 import com.github.thecodeyt.mapeditor.editor.scene.gameobject.GameObject;
 import com.github.thecodeyt.mapeditor.math.Axis;
+import com.github.thecodeyt.mapeditor.math.Mathf;
+import com.github.thecodeyt.mapeditor.math.Shapf;
 import com.github.thecodeyt.mapeditor.math.input.ActionDesc;
 import com.github.thecodeyt.mapeditor.math.input.Branch;
 import com.github.thecodeyt.mapeditor.math.input.Inputf;
-import com.github.thecodeyt.mapeditor.math.Mathf;
-import com.github.thecodeyt.mapeditor.math.Shapf;
 
 public class Selection {
     public Scene scene;

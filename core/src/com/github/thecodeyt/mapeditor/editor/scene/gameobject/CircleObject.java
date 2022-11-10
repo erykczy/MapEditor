@@ -25,7 +25,6 @@ public class CircleObject extends GameObject {
     public void draw() {
         super.draw();
         int segments = Math.min(Math.round(this.radius+40), Constants.MAX_CIRCLE_SEGMENTS);
-        System.out.println("segments: "+segments);
         this.scene.camera.shapeRenderer.circle(this.position.x+this.radius, this.position.y+this.radius, this.radius, segments);
     }
 

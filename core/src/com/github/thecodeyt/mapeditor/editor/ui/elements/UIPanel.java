@@ -29,4 +29,10 @@ public class UIPanel extends UIRect {
             element.draw();
         }
     }
+
+    // GETTERS SETTERS
+    public void addElement(UIElement uiElement) {
+        uiElement.parent = this;
+        elements.add(uiElement);
+    }
 }

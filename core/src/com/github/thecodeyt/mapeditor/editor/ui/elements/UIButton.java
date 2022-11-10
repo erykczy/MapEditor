@@ -2,49 +2,44 @@ package com.github.thecodeyt.mapeditor.editor.ui.elements;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector2;
-import com.github.thecodeyt.mapeditor.editor.font.Fonts;
 import com.github.thecodeyt.mapeditor.editor.ui.UI;
 import com.github.thecodeyt.mapeditor.math.HitBox;
 import com.github.thecodeyt.mapeditor.math.input.Inputf;
 
-public class UIButton extends UIRect {
+public class UIButton extends UIPanel {
+    public Color defaultColor;
     public Color hoverColor;
-    public Color textColor;
     public boolean hover = false;
-    public String text;
-    public BitmapFont font;
     public Runnable onClick;
+    public UIText text;
 
     public UIButton(UI ui, Vector2 position, Vector2 size, Color color, Color hoverColor, Color textColor, String text, Runnable onClick) {
         super(ui, position, size, color);
+        this.defaultColor = color;
         this.hoverColor = hoverColor;
-        this.text = text;
-        this.textColor = textColor;
+
+        this.text = new UIText(ui, position, (int)size.y, textColor, text);
         this.onClick = onClick;
 
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = (int)size.y;
-        parameter.color = this.textColor;
-        this.font = Fonts.PIXEL.generateFont(parameter);
+        addElement(this.text);
     }
     public UIButton(UI ui, Vector2 position, Vector2 size, Color color, Color hoverColor, Color textColor, String text, int textSize, Runnable onClick) {
         super(ui, position, size, color);
         this.hoverColor = hoverColor;
-        this.text = text;
-        this.textColor = textColor;
+
+        Vector2 textPos = position.cpy();
+        textPos.y -= (size.y - textSize)/2F;
+        this.text = new UIText(ui, textPos, textSize, textColor, text);
+
         this.onClick = onClick;
 
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = textSize;
-        parameter.color = this.textColor;
-        this.font = Fonts.PIXEL.generateFont(parameter);
+        addElement(this.text);
     }
 
     @Override
     public void update(float delta) {
+        super.update(delta);
         Vector2 pointerPosition = Inputf.getPointerPosition(this.ui.camera.viewport);
 
         if(getHitBox().isPointColliding(pointerPosition)) {
@@ -64,14 +59,8 @@ public class UIButton extends UIRect {
 
     @Override
     public void draw() {
-        if(this.hover) {
-            super.draw(this.color.cpy().add(hoverColor));
-        }
-        else {
-            super.draw(this.color);
-        }
-        if(isPresent(this.ui.camera.spriteBatch)) {
-            font.draw(this.ui.camera.spriteBatch, text, position.x, position.y+size.y);
-        }
+        this.color = this.hover ? this.hoverColor : this.defaultColor;
+
+        super.draw();
     }
 }

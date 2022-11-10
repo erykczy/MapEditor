@@ -14,6 +14,7 @@ public class GameObject {
         this.scene = scene;
         this.position = position;
         this.size = size;
+
     }
 
     public HitBox getHitBox() {

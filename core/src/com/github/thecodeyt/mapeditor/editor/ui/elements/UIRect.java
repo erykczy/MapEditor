@@ -6,14 +6,10 @@ import com.github.thecodeyt.mapeditor.editor.ui.UI;
 import com.github.thecodeyt.mapeditor.math.HitBox;
 
 public class UIRect extends UIElement {
-    public Vector2 position;
-    public Vector2 size;
     public Color color;
 
     public UIRect(UI ui, Vector2 position, Vector2 size, Color color) {
-        super(ui);
-        this.position = position;
-        this.size = size;
+        super(ui, position, size);
         this.color = color;
     }
 

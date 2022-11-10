@@ -11,7 +11,6 @@ import com.github.thecodeyt.mapeditor.math.input.ActionDesc;
 import com.github.thecodeyt.mapeditor.math.input.Inputf;
 
 public class UISizeChanger extends UIElement {
-    public Vector2 position = new Vector2();
     public float radius = Constants.CHANGER_SIZE*100;
     public float currentSize = 0;
     private ActionDesc changeSizeActionDesc;
@@ -19,8 +18,8 @@ public class UISizeChanger extends UIElement {
     public float maxSize;
     public Axis axis;
 
-    public UISizeChanger(UI ui, ActionDesc onChangeSizeAction, Axis axis, float currentSize, float minSize, float maxSize) {
-        super(ui);
+    public UISizeChanger(UI ui, Vector2 position, ActionDesc onChangeSizeAction, Axis axis, float currentSize, float minSize, float maxSize) {
+        super(ui, position, new Vector2());
         this.currentSize = currentSize;
         this.changeSizeActionDesc = onChangeSizeAction;
         this.minSize = minSize;
