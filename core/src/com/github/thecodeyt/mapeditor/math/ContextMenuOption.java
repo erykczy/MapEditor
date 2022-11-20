@@ -1,4 +1,4 @@
-package com.github.thecodeyt.mapeditor.editor.ui.elements.contextmenu;
+package com.github.thecodeyt.mapeditor.math;
 
 public class ContextMenuOption {
     public String name;

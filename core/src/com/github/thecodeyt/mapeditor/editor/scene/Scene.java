@@ -8,14 +8,15 @@ import com.github.thecodeyt.mapeditor.editor.scene.gameobject.CircleObject;
 import com.github.thecodeyt.mapeditor.editor.scene.gameobject.GameObject;
 import com.github.thecodeyt.mapeditor.editor.scene.gameobject.selection.Selection;
 import com.github.thecodeyt.mapeditor.math.input.Inputf;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Scene {
-    public SceneCamera camera;
-    public List<GameObject> gameObjects = new ArrayList<>();
-    public Selection currentSelection = null;
+    @Getter private SceneCamera camera;
+    @Getter private List<GameObject> gameObjects = new ArrayList<>();
+    @Getter private Selection currentSelection = null;
 
     public Scene() {
         camera = new SceneCamera(this);
@@ -23,15 +24,19 @@ public class Scene {
 
     public void createNewCircleObject(Vector2 position, float radius) {
         CircleObject circleObject = new CircleObject(this, position, radius);
-        gameObjects.add(circleObject);
-        createNewSelection(circleObject);
+        addNewGameObject(circleObject, true);
+    }
+    public void addNewGameObject(GameObject gameObject, boolean select) {
+        gameObjects.add(gameObject);
+        if(select)
+            createNewSelection(gameObject);
     }
     public void removeSelectedGameObject() {
         if(currentSelection == null) {
             return;
         }
 
-        gameObjects.remove(currentSelection.gameObject);
+        gameObjects.remove(currentSelection.getGameObject());
         currentSelection = null;
     }
     public void createNewSelection(GameObject gameObject) {
@@ -40,11 +45,11 @@ public class Scene {
     }
     public GameObject duplicateGameObject(GameObject gameObject) {
         GameObject copy = gameObject.copy();
-        copy.position.add(copy.getSize()); // offset
+        copy.getPosition().add(copy.getSize()); // offset
 
-        this.gameObjects.add(copy); // adding
+        gameObjects.add(copy); // adding
 
-        this.createNewSelection(copy); // new selection
+        createNewSelection(copy); // new selection
         return copy;
     }
     private void handleSelection() {
@@ -54,10 +59,10 @@ public class Scene {
 
         if(currentSelection != null) {
             if(Gdx.input.isKeyJustPressed(Input.Keys.FORWARD_DEL)) {
-                this.removeSelectedGameObject();
+                removeSelectedGameObject();
             }
             if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-                this.duplicateGameObject(currentSelection.gameObject);
+                duplicateGameObject(currentSelection.getGameObject());
             }
         }
 
@@ -69,7 +74,7 @@ public class Scene {
         boolean noGameObjectSelected = true;
         // Creating selection
         // don't want to select the same gameObject again
-        if(currentSelection != null && currentSelection.gameObject.getHitBox().isPointColliding(pointerPosition)) {
+        if(currentSelection != null && currentSelection.getGameObject().getHitBox().isPointColliding(pointerPosition)) {
             noGameObjectSelected = false;
         }
         else {
@@ -93,7 +98,7 @@ public class Scene {
     }
 
     public void update(float delta) {
-        this.handleSelection();
+        handleSelection();
 
         // Updating game objects
         for (GameObject gameObject : gameObjects) {

@@ -12,9 +12,10 @@ import com.github.thecodeyt.mapeditor.editor.Constants;
 import com.github.thecodeyt.mapeditor.editor.scene.Scene;
 import com.github.thecodeyt.mapeditor.editor.scene.gameobject.GameObject;
 import com.github.thecodeyt.mapeditor.math.render.GridRenderer;
+import lombok.Getter;
 
 public class SceneCamera {
-    public Scene scene;
+    @Getter private Scene scene;
     public final Viewport viewport = new ExtendViewport(20, 20, new OrthographicCamera());
     public final ShapeRenderer shapeRenderer = new ShapeRenderer();
     public final GridRenderer gridRenderer = new GridRenderer();
@@ -60,7 +61,7 @@ public class SceneCamera {
     public void update(float delta) {
         OrthographicCamera sceneCamera = (OrthographicCamera) viewport.getCamera();
 
-        this.handleCameraMovement(delta);
+        handleCameraMovement(delta);
         sceneCamera.update();
     }
     public void draw() {
@@ -81,13 +82,13 @@ public class SceneCamera {
 
         // Game objects
         shapeRenderer.setColor(Constants.GAME_OBJECT_COLOR);
-        for (GameObject gameObject : scene.gameObjects) {
+        for (GameObject gameObject : scene.getGameObjects()) {
             gameObject.draw();
         }
 
         // Current selection
-        if(scene.currentSelection != null)
-            scene.currentSelection.draw();
+        if(scene.getCurrentSelection() != null)
+            scene.getCurrentSelection().draw();
 
         shapeRenderer.end();
     }

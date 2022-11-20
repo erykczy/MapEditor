@@ -17,6 +17,12 @@ public class Inputf {
     public static boolean justLeftClick() {
         return Gdx.input.isButtonJustPressed(0);
     }
+    public static boolean rightClick() {
+        return Gdx.input.isButtonPressed(1);
+    }
+    public static boolean justRightClick() {
+        return Gdx.input.isButtonJustPressed(1);
+    }
 
     public static Vector2 getPointerPosition(Viewport viewport) {
         Vector2 pointerPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());

@@ -1,60 +1,36 @@
 package com.github.thecodeyt.mapeditor.editor.ui;
 
 import com.badlogic.gdx.Gdx;
-import com.github.thecodeyt.mapeditor.editor.ui.camera.UICamera;
-import com.github.thecodeyt.mapeditor.editor.ui.elements.UIElement;
-import com.github.thecodeyt.mapeditor.editor.ui.elements.contextmenu.ContextMenu;
-import com.github.thecodeyt.mapeditor.editor.ui.prefab.PropertyTabPrefab;
-import com.github.thecodeyt.mapeditor.editor.ui.prefab.RightClickContextMenuPrefab;
-import com.github.thecodeyt.mapeditor.editor.ui.prefab.UIPrefab;
+import com.github.thecodeyt.mapeditor.editor.ui.camera.CanvasCamera;
+import com.github.thecodeyt.mapeditor.editor.ui.canvas.UICanvas;
+import com.github.thecodeyt.mapeditor.editor.ui.canvas.element.ui.UIElement;
+import com.github.thecodeyt.mapeditor.editor.ui.canvas.prefab.propertiestab.PropTabPrefab;
+import com.github.thecodeyt.mapeditor.editor.ui.canvas.prefab.ui.SceneContextMenuPrefab;
 import com.github.thecodeyt.mapeditor.math.input.Inputf;
 import com.github.thecodeyt.mapeditor.screen.EditorScreen;
-
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Getter;
 
 public class UI {
-    public UICamera camera;
-    public List<UIElement> elements = new ArrayList<>();
-    public List<UIPrefab> prefabs = new ArrayList<>();
-    public ContextMenu currentContextMenu = null;
-    public EditorScreen editor;
-    private boolean created = false;
+    public CanvasCamera<UICanvas> camera;
+    @Getter private UICanvas canvas;
+    @Getter private EditorScreen editor;
 
     public UI(EditorScreen editor) {
-        this.camera = new UICamera(this);
         this.editor = editor;
+        this.canvas = new UICanvas();
+        this.camera = new CanvasCamera<UICanvas>(getCanvas());
+        this.canvas.setCamera(this.camera);
     }
-
-    public void setCurrentContextMenu(ContextMenu panel) {
-        removeElement(currentContextMenu);
-        currentContextMenu = panel;
-        if(panel != null) {
-            addElement(currentContextMenu);
-        }
-    }
-
+    private boolean created = false;
     private void create() {
-        created = true;
-        prefabs.add(new PropertyTabPrefab(this));
+        PropTabPrefab propertiesTabPrefab = new PropTabPrefab(getCanvas());
+        getCanvas().addPrefab((propertiesTabPrefab));
     }
-    public void update(float delta) {
-        if(!created) {
-            create();
-        }
-
-        for (UIElement element : elements) {
-            element.update(delta);
-        }
-        for (UIPrefab prefab : prefabs) {
-            prefab.update();
-        }
-
-        // Context menu
-        if(Gdx.input.isButtonJustPressed(1)) {
-            setCurrentContextMenu(null);
+    private void handleContextMenu() {
+        if(Inputf.justRightClick()) {
+            getCanvas().setCurrentContextMenu(null);
             boolean collidingWithUiElement = false;
-            for(UIElement element : elements) {
+            for(UIElement element : getCanvas().getElements()) {
                 if(element.getHitBox() == null) {
                     continue;
                 }
@@ -63,26 +39,31 @@ public class UI {
                     break;
                 }
             }
+            // if clicking at scene
             if(!collidingWithUiElement) {
-                prefabs.add(new RightClickContextMenuPrefab(this));
+                getCanvas().addPrefab((new SceneContextMenuPrefab(getCanvas(), getEditor().getScene())));
             }
         }
         if(Gdx.input.isButtonJustPressed(0)) {
-            setCurrentContextMenu(null);
+            getCanvas().setCurrentContextMenu(null);
         }
     }
+    public void update(float delta) {
+        if(!created) {
+            created = true;
+            create();
+        }
+
+        getCanvas().update(delta);
+
+        // Context menu
+        handleContextMenu();
+    }
+
     public void draw() {
         camera.draw();
     }
     public void resize(int width, int height) {
         camera.resize(width, height);
-    }
-
-    // GETTERS SETTERS
-    public void addElement(UIElement element) {
-        this.elements.add(element);
-    }
-    public void removeElement(UIElement element) {
-        this.elements.remove(element);
     }
 }

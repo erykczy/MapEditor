@@ -9,14 +9,15 @@ import com.github.thecodeyt.mapeditor.editor.scene.Scene;
 import com.github.thecodeyt.mapeditor.editor.scene.gameobject.GameObject;
 import com.github.thecodeyt.mapeditor.math.Axis;
 import com.github.thecodeyt.mapeditor.math.Mathf;
-import com.github.thecodeyt.mapeditor.math.Shapf;
 import com.github.thecodeyt.mapeditor.math.input.ActionDesc;
 import com.github.thecodeyt.mapeditor.math.input.Branch;
 import com.github.thecodeyt.mapeditor.math.input.Inputf;
+import com.github.thecodeyt.mapeditor.math.render.Drawf;
+import lombok.Getter;
 
 public class Selection {
-    public Scene scene;
-    public GameObject gameObject;
+    @Getter private Scene scene;
+    @Getter private GameObject gameObject;
 
     private SceneSizeChanger widthChanger;
     private SceneSizeChanger heightChanger;
@@ -25,8 +26,8 @@ public class Selection {
     public Selection(Scene scene, GameObject gameObject) {
         this.scene = scene;
         this.gameObject = gameObject;
-        this.widthChanger = new SceneSizeChanger(scene, new ActionDesc(Branch.GAME_OBJECT, Branch.SELECTION, Branch.CHANGE_SIZE, Branch.X), Axis.X, this.gameObject.getSize().x, Constants.MIN_GAME_OBJECT_SIZE, -1);
-        this.heightChanger = new SceneSizeChanger(scene, new ActionDesc(Branch.GAME_OBJECT, Branch.SELECTION, Branch.CHANGE_SIZE, Branch.Y), Axis.Y, this.gameObject.getSize().y, Constants.MIN_GAME_OBJECT_SIZE, -1);
+        this.widthChanger = new SceneSizeChanger(scene, new ActionDesc(Branch.GAME_OBJECT, Branch.SELECTION, Branch.CHANGE_SIZE, Branch.X), Axis.X, gameObject.getSize().x, Constants.MIN_GAME_OBJECT_SIZE, -1);
+        this.heightChanger = new SceneSizeChanger(scene, new ActionDesc(Branch.GAME_OBJECT, Branch.SELECTION, Branch.CHANGE_SIZE, Branch.Y), Axis.Y, gameObject.getSize().y, Constants.MIN_GAME_OBJECT_SIZE, -1);
     }
 
     private void checkForActions() {
@@ -41,28 +42,30 @@ public class Selection {
         if(Inputf.isAnyActionExecuting()) {
             return;
         }
-        Vector2 pointerPosition = Inputf.getPointerPosition(scene.camera.viewport);
+        Vector2 pointerPosition = Inputf.getPointerPosition(scene.getCamera().viewport);
 
-        if(!this.gameObject.getHitBox().isPointColliding(pointerPosition)) {
+        if(!gameObject.getHitBox().isPointColliding(pointerPosition)) {
             return;
         }
 
         Inputf.setCurrentActionDesc(new ActionDesc(Branch.GAME_OBJECT, Branch.SELECTION, Branch.CHANGE_POS));
-        this.moveDelta = Mathf.delta(gameObject.position, pointerPosition);
+        moveDelta = Mathf.delta(gameObject.getPosition(), pointerPosition);
     }
     private void executeCurrentAction() {
         if(!Inputf.isAnyActionExecuting() || !Inputf.getCurrentActionDesc().hasBranch(Branch.GAME_OBJECT, Branch.SELECTION)) {
             return;
         }
 
-        Vector2 pointerPosition = Inputf.getPointerPosition(scene.camera.viewport);
+        Vector2 pointerPosition = Inputf.getPointerPosition(scene.getCamera().viewport);
         boolean align = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT);
 
         if(Inputf.getCurrentActionDesc().hasBranch(Branch.CHANGE_POS)) {
-            gameObject.position = pointerPosition.cpy().sub(this.moveDelta);
+            gameObject.setPosition(pointerPosition.cpy().sub(moveDelta));
 
             if(align) {
-                Mathf.align(gameObject.position, Constants.GRID_SPACING);
+                Vector2 newPos = gameObject.getPosition();
+                Mathf.align(newPos, Constants.GRID_SPACING);
+                gameObject.setPosition(newPos);
             }
         }
     }
@@ -70,16 +73,16 @@ public class Selection {
         // UPDATING WIDTH CHANGER
         widthChanger.update(gameObject.getSize());
         // applying size to gameObject
-        this.gameObject.setSize(new Vector2(this.widthChanger.currentSize, this.gameObject.getSize().y));
+        gameObject.setSize(new Vector2(widthChanger.getCurrentSize(), this.gameObject.getSize().y));
         // updating changer position
-        this.widthChanger.position = new Vector2(this.gameObject.position.x+this.gameObject.getSize().x, this.gameObject.position.y+this.gameObject.getSize().y/2F);
+        this.widthChanger.setPosition(new Vector2(this.gameObject.getPosition().x+this.gameObject.getSize().x, this.gameObject.getPosition().y+this.gameObject.getSize().y/2F));
 
         // UPDATING HEIGHT CHANGER
         heightChanger.update(gameObject.getSize());
         // applying size to gameObject
-        this.gameObject.setSize(new Vector2(this.gameObject.getSize().x, this.heightChanger.currentSize));
+        this.gameObject.setSize(new Vector2(this.gameObject.getSize().x, this.heightChanger.getCurrentSize()));
         // updating changer position
-        this.heightChanger.position = new Vector2(this.gameObject.position.x+this.gameObject.getSize().x/2F, this.gameObject.position.y+this.gameObject.getSize().y);
+        this.heightChanger.setPosition(new Vector2(this.gameObject.getPosition().x+this.gameObject.getSize().x/2F, this.gameObject.getPosition().y+this.gameObject.getSize().y));
     }
 
     public void update() {
@@ -88,11 +91,11 @@ public class Selection {
         this.executeCurrentAction();
     }
     public void draw() {
-        ShapeRenderer shapeRenderer = this.scene.camera.shapeRenderer;
+        ShapeRenderer shapeRenderer = this.scene.getCamera().shapeRenderer;
         shapeRenderer.setColor(Constants.GAME_OBJECT_SELECTION_COLOR);
 
         // lines
-        Shapf.drawBorder(shapeRenderer, gameObject.position, gameObject.getSize(), Constants.GAME_OBJECT_SELECTION_COLOR);
+        Drawf.drawBorder(shapeRenderer, gameObject.getPosition(), gameObject.getSize(), Constants.GAME_OBJECT_SELECTION_COLOR);
 
         // changers
         if(!Inputf.isAnyActionExecuting() || !Inputf.getCurrentActionDesc().hasBranch(Branch.GAME_OBJECT, Branch.SELECTION, Branch.CHANGE_POS)) {  // decoration
@@ -102,6 +105,6 @@ public class Selection {
 
         // anchor point
         shapeRenderer.setColor(Constants.POSITION_POINT_COLOR);
-        shapeRenderer.circle(gameObject.position.x, gameObject.position.y, 1, 100);
+        shapeRenderer.circle(gameObject.getPosition().x, gameObject.getPosition().y, 1, 100);
     }
 }

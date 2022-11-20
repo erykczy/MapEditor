@@ -5,18 +5,20 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.github.thecodeyt.mapeditor.editor.ui.UI;
-import com.github.thecodeyt.mapeditor.editor.ui.elements.UIElement;
+import com.github.thecodeyt.mapeditor.editor.ui.canvas.Canvas;
+import lombok.Getter;
 
-public class UICamera {
-    public UI ui;
+import java.util.List;
+
+public class CanvasCamera<T extends Canvas> {
+    @Getter private List<T> canvases;
     public final Viewport viewport;
     public final ShapeRenderer shapeRenderer;
     public final SpriteBatch spriteBatch;
 
-    public UICamera(UI ui) {
-        this.ui = ui;
-        this.viewport = new ExtendViewport(400, 400, new OrthographicCamera());
+    public CanvasCamera(T... canvases) {
+        this.canvases = List.of(canvases);
+        this.viewport = new ExtendViewport(400, 400);
         this.shapeRenderer = new ShapeRenderer();
         this.spriteBatch = new SpriteBatch();
     }
@@ -32,8 +34,8 @@ public class UICamera {
         // Shapes
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        for (UIElement element : ui.elements) {
-            element.draw();
+        for (T canvas : canvases) {
+            canvas.draw();
         }
 
         shapeRenderer.end();
@@ -41,14 +43,21 @@ public class UICamera {
         // Sprites
         spriteBatch.begin();
 
-        for (UIElement element : ui.elements) {
-            element.draw();
+        for (T canvas : canvases) {
+            canvas.draw();
         }
 
         spriteBatch.end();
+
+        for (T canvas : canvases) {
+            canvas.drawOutOfDrawingContext();
+        }
     }
 
     public void resize(int width, int height) {
         viewport.update(width, height);
+        for (T canvas : canvases) {
+            canvas.resize(width, height);
+        }
     }
 }
